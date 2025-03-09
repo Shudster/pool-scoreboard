@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pool Scoreboard</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: black; color: white; text-align: center; }
+        .scoreboard { display: flex; justify-content: center; gap: 50px; margin-top: 50px; }
+        .table { background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px; }
+        .score { font-size: 40px; }
+        button { font-size: 20px; padding: 10px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Live Pool Scoreboard</h1>
+    <div class="scoreboard">
+        <div class="table">
+            <h2>Table 1</h2>
+            <input id="player1a" placeholder="Player 1 Name">
+            <div class="score" id="score1a">0</div>
+            <button onclick="updateScore(1, 'a', 1)">+1</button>
+            <button onclick="updateScore(1, 'a', -1)">-1</button>
+        </div>
+        <div class="table">
+            <h2>Table 2</h2>
+            <input id="player2a" placeholder="Player 2 Name">
+            <div class="score" id="score2a">0</div>
+            <button onclick="updateScore(2, 'a', 1)">+1</button>
+            <button onclick="updateScore(2, 'a', -1)">-1</button>
+        </div>
+    </div>
+    <script>
+        const firebaseConfig = { YOUR_FIREBASE_CONFIG };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function updateScore(table, player, value) {
+            let ref = db.collection("scores").doc(`table${table}`);
+            ref.get().then(doc => {
+                let data = doc.exists ? doc.data() : { a: 0 };
+                ref.set({ [player]: (data[player] || 0) + value }, { merge: true });
+            });
+        }
+
+        function loadScores() {
+            [1, 2].forEach(table => {
+                db.collection("scores").doc(`table${table}`).onSnapshot(doc => {
+                    if (doc.exists) {
+                        document.getElementById(`score${table}a`).innerText = doc.data().a || 0;
+                    }
+                });
+            });
+        }
+        loadScores();
+    </script>
+</body>
+</html>
