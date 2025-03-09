@@ -18,34 +18,37 @@
 
         .ribbon {
             position: fixed;
-            width: 1920px;
-            height: 200px;
+            width: 1280px;
+            height: 80px;
             background: linear-gradient(to right, #0057b8, #003e82);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 50px;
-            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+            padding: 0 30px;
+            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
         }
 
         .table-section {
             display: flex;
             align-items: center;
-            gap: 30px;
+            gap: 20px;
         }
 
         .player {
-            font-size: 45px;
+            font-size: 28px;
             font-weight: bold;
         }
 
         .score {
-            font-size: 60px;
+            font-size: 32px;
             font-weight: bold;
             background: white;
             color: black;
-            padding: 10px 30px;
-            border-radius: 10px;
+            padding: 5px 15px;
+            border-radius: 5px;
+            min-width: 50px;
+            text-align: center;
         }
     </style>
 </head>
@@ -55,6 +58,7 @@
         <div class="table-section">
             <span class="player" id="player1aName">Player 1</span>
             <span class="score" id="score1a">0</span>
+            <span class="score" id="score1b">0</span>
             <span class="player" id="player1bName">Player 2</span>
         </div>
 
@@ -62,6 +66,7 @@
         <div class="table-section">
             <span class="player" id="player2aName">Player 1</span>
             <span class="score" id="score2a">0</span>
+            <span class="score" id="score2b">0</span>
             <span class="player" id="player2bName">Player 2</span>
         </div>
     </div>
@@ -87,6 +92,7 @@
                         document.getElementById(`player${table}aName`).innerText = data.namea || "Player 1";
                         document.getElementById(`player${table}bName`).innerText = data.nameb || "Player 2";
                         document.getElementById(`score${table}a`).innerText = data.a || 0;
+                        document.getElementById(`score${table}b`).innerText = data.b || 0;
                     }
                 });
             });
