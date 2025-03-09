@@ -8,52 +8,95 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
     <style>
         body { font-family: Arial, sans-serif; background: black; color: white; text-align: center; }
-        .scoreboard { display: flex; justify-content: center; gap: 50px; margin-top: 50px; }
-        .table { background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px; }
-        .score { font-size: 40px; }
-        button { font-size: 20px; padding: 10px; margin: 5px; }
+        .scoreboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 50px; margin-top: 30px; }
+        .table { background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px; width: 300px; }
+        .player { margin-bottom: 15px; }
+        .score { font-size: 40px; font-weight: bold; margin: 10px 0; }
+        button { font-size: 20px; padding: 10px; margin: 5px; cursor: pointer; }
+        .btn-score { background: #28a745; color: white; border: none; border-radius: 5px; }
+        .btn-minus { background: #dc3545; color: white; border: none; border-radius: 5px; }
     </style>
 </head>
 <body>
     <h1>Live Pool Scoreboard</h1>
+
     <div class="scoreboard">
+        <!-- Table 1 -->
         <div class="table">
             <h2>Table 1</h2>
-            <input id="player1a" placeholder="Player 1 Name">
-            <div class="score" id="score1a">0</div>
-            <button onclick="updateScore(1, 'a', 1)">+1</button>
-            <button onclick="updateScore(1, 'a', -1)">-1</button>
+            <div class="player">
+                <input type="text" id="player1a" placeholder="Player 1 Name" oninput="saveName(1, 'a')">
+                <div class="score" id="score1a">0</div>
+                <button class="btn-score" onclick="updateScore(1, 'a', 1)">+1</button>
+                <button class="btn-minus" onclick="updateScore(1, 'a', -1)">-1</button>
+            </div>
+            <div class="player">
+                <input type="text" id="player1b" placeholder="Player 2 Name" oninput="saveName(1, 'b')">
+                <div class="score" id="score1b">0</div>
+                <button class="btn-score" onclick="updateScore(1, 'b', 1)">+1</button>
+                <button class="btn-minus" onclick="updateScore(1, 'b', -1)">-1</button>
+            </div>
         </div>
+
+        <!-- Table 2 -->
         <div class="table">
             <h2>Table 2</h2>
-            <input id="player2a" placeholder="Player 2 Name">
-            <div class="score" id="score2a">0</div>
-            <button onclick="updateScore(2, 'a', 1)">+1</button>
-            <button onclick="updateScore(2, 'a', -1)">-1</button>
+            <div class="player">
+                <input type="text" id="player2a" placeholder="Player 1 Name" oninput="saveName(2, 'a')">
+                <div class="score" id="score2a">0</div>
+                <button class="btn-score" onclick="updateScore(2, 'a', 1)">+1</button>
+                <button class="btn-minus" onclick="updateScore(2, 'a', -1)">-1</button>
+            </div>
+            <div class="player">
+                <input type="text" id="player2b" placeholder="Player 2 Name" oninput="saveName(2, 'b')">
+                <div class="score" id="score2b">0</div>
+                <button class="btn-score" onclick="updateScore(2, 'b', 1)">+1</button>
+                <button class="btn-minus" onclick="updateScore(2, 'b', -1)">-1</button>
+            </div>
         </div>
     </div>
+
     <script>
-        const firebaseConfig = { YOUR_FIREBASE_CONFIG };
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR-API-KEY",
+            authDomain: "YOUR-PROJECT-ID.firebaseapp.com",
+            projectId: "YOUR-PROJECT-ID",
+            storageBucket: "YOUR-PROJECT-ID.appspot.com",
+            messagingSenderId: "YOUR-SENDER-ID",
+            appId: "YOUR-APP-ID"
+        };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
         function updateScore(table, player, value) {
-            let ref = db.collection("scores").doc(`table${table}`);
-            ref.get().then(doc => {
-                let data = doc.exists ? doc.data() : { a: 0 };
-                ref.set({ [player]: (data[player] || 0) + value }, { merge: true });
+            let scoreRef = db.collection("scores").doc(`table${table}`);
+            scoreRef.get().then((doc) => {
+                let data = doc.exists ? doc.data() : { a: 0, b: 0 };
+                let newScore = Math.max(0, (data[player] || 0) + value);
+                scoreRef.set({ [player]: newScore }, { merge: true });
             });
+        }
+
+        function saveName(table, player) {
+            let playerName = document.getElementById(`player${table}${player}`).value;
+            db.collection("scores").doc(`table${table}`).set({ [`name${player}`]: playerName }, { merge: true });
         }
 
         function loadScores() {
             [1, 2].forEach(table => {
-                db.collection("scores").doc(`table${table}`).onSnapshot(doc => {
+                db.collection("scores").doc(`table${table}`).onSnapshot((doc) => {
                     if (doc.exists) {
-                        document.getElementById(`score${table}a`).innerText = doc.data().a || 0;
+                        let data = doc.data();
+                        document.getElementById(`score${table}a`).innerText = data.a || 0;
+                        document.getElementById(`score${table}b`).innerText = data.b || 0;
+                        document.getElementById(`player${table}a`).value = data.namea || "";
+                        document.getElementById(`player${table}b`).value = data.nameb || "";
                     }
                 });
             });
         }
+
         loadScores();
     </script>
 </body>
