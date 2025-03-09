@@ -7,29 +7,89 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background: transparent; color: white; text-align: center; }
-        .table { font-size: 40px; background: rgba(0, 0, 0, 0.7); padding: 15px; border-radius: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            background: transparent;
+            color: white;
+            text-align: center;
+        }
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            font-size: 40px;
+            font-weight: bold;
+            padding: 20px;
+        }
+        .table {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 30px;
+            border-radius: 10px;
+            min-width: 300px;
+        }
+        .player {
+            display: flex;
+            justify-content: space-between;
+            font-size: 35px;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
-    <div class="table">
-        <h2>Table 1: <span id="score1a">0</span></h2>
-        <h2>Table 2: <span id="score2a">0</span></h2>
+    <div class="scoreboard">
+        <!-- Table 1 -->
+        <div class="table">
+            <h2>Table 1</h2>
+            <div class="player">
+                <span id="player1aName">Player 1</span> 
+                <span id="score1a">0</span>
+            </div>
+            <div class="player">
+                <span id="player1bName">Player 2</span> 
+                <span id="score1b">0</span>
+            </div>
+        </div>
+
+        <!-- Table 2 -->
+        <div class="table">
+            <h2>Table 2</h2>
+            <div class="player">
+                <span id="player2aName">Player 1</span> 
+                <span id="score2a">0</span>
+            </div>
+            <div class="player">
+                <span id="player2bName">Player 2</span> 
+                <span id="score2b">0</span>
+            </div>
+        </div>
     </div>
+
     <script>
-        const firebaseConfig = { YOUR_FIREBASE_CONFIG };
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR-API-KEY",
+            authDomain: "YOUR-PROJECT-ID.firebaseapp.com",
+            projectId: "YOUR-PROJECT-ID",
+            storageBucket: "YOUR-PROJECT-ID.appspot.com",
+            messagingSenderId: "YOUR-SENDER-ID",
+            appId: "YOUR-APP-ID"
+        };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
         function updateOverlay() {
             [1, 2].forEach(table => {
-                db.collection("scores").doc(`table${table}`).onSnapshot(doc => {
+                db.collection("scores").doc(`table${table}`).onSnapshot((doc) => {
                     if (doc.exists) {
-                        document.getElementById(`score${table}a`).innerText = doc.data().a || 0;
+                        let data = doc.data();
+                        document.getElementById(`player${table}aName`).innerText = data.namea || "Player 1";
+                        document.getElementById(`player${table}bName`).innerText = data.nameb || "Player 2";
+                        document.getElementById(`score${table}a`).innerText = data.a || 0;
+                        document.getElementById(`score${table}b`).innerText = data.b || 0;
                     }
                 });
             });
         }
+
         updateOverlay();
     </script>
 </body>
