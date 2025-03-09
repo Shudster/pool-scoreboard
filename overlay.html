@@ -12,54 +12,57 @@
             background: transparent;
             color: white;
             text-align: center;
+            margin: 0;
+            overflow: hidden;
         }
-        .scoreboard {
-            display: flex;
-            justify-content: space-around;
-            font-size: 40px;
-            font-weight: bold;
-            padding: 20px;
-        }
-        .table {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px 30px;
-            border-radius: 10px;
-            min-width: 300px;
-        }
-        .player {
+
+        .ribbon {
+            position: fixed;
+            width: 1920px;
+            height: 200px;
+            background: linear-gradient(to right, #0057b8, #003e82);
             display: flex;
             justify-content: space-between;
-            font-size: 35px;
-            margin: 10px 0;
+            align-items: center;
+            padding: 0 50px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .table-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .player {
+            font-size: 45px;
+            font-weight: bold;
+        }
+
+        .score {
+            font-size: 60px;
+            font-weight: bold;
+            background: white;
+            color: black;
+            padding: 10px 30px;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="scoreboard">
-        <!-- Table 1 -->
-        <div class="table">
-            <h2>Table 1</h2>
-            <div class="player">
-                <span id="player1aName">Player 1</span> 
-                <span id="score1a">0</span>
-            </div>
-            <div class="player">
-                <span id="player1bName">Player 2</span> 
-                <span id="score1b">0</span>
-            </div>
+    <div class="ribbon">
+        <!-- Table 1 (Left Side) -->
+        <div class="table-section">
+            <span class="player" id="player1aName">Player 1</span>
+            <span class="score" id="score1a">0</span>
+            <span class="player" id="player1bName">Player 2</span>
         </div>
 
-        <!-- Table 2 -->
-        <div class="table">
-            <h2>Table 2</h2>
-            <div class="player">
-                <span id="player2aName">Player 1</span> 
-                <span id="score2a">0</span>
-            </div>
-            <div class="player">
-                <span id="player2bName">Player 2</span> 
-                <span id="score2b">0</span>
-            </div>
+        <!-- Table 2 (Right Side) -->
+        <div class="table-section">
+            <span class="player" id="player2aName">Player 1</span>
+            <span class="score" id="score2a">0</span>
+            <span class="player" id="player2bName">Player 2</span>
         </div>
     </div>
 
@@ -84,7 +87,6 @@
                         document.getElementById(`player${table}aName`).innerText = data.namea || "Player 1";
                         document.getElementById(`player${table}bName`).innerText = data.nameb || "Player 2";
                         document.getElementById(`score${table}a`).innerText = data.a || 0;
-                        document.getElementById(`score${table}b`).innerText = data.b || 0;
                     }
                 });
             });
